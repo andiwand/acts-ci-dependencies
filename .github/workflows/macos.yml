@@ -54,6 +54,8 @@ jobs:
       - name: Install dependencies
         run: brew install cmake
 
+      - run: sudo mkdir ${INSTALL_DIR} && sudo chown $USER ${INSTALL_DIR}
+
       - name: Build
         run: >
           curl -SL https://github.com/apache/xerces-c/archive/v${XERCESC_VERSION}.tar.gz | tar -xzC . 
@@ -84,7 +86,7 @@ jobs:
           path: .
 
       - run: >
-          mkdir ${INSTALL_DIR}
+          sudo mkdir ${INSTALL_DIR} && sudo chown $USER ${INSTALL_DIR}
           && tar xf tbb.tar.gz -C $INSTALL_DIR
 
       - name: Build
@@ -127,7 +129,7 @@ jobs:
           path: .
 
       - run: >
-          mkdir ${INSTALL_DIR}
+          sudo mkdir ${INSTALL_DIR} && sudo chown $USER ${INSTALL_DIR}
           && tar xf xercesc.tar.gz -C ${INSTALL_DIR}
                         
       - name: Build Geant4
@@ -178,7 +180,7 @@ jobs:
           path: .
 
       - run: >
-          mkdir ${INSTALL_DIR}
+          sudo mkdir ${INSTALL_DIR} && sudo chown $USER ${INSTALL_DIR}
           && tar xf xercesc.tar.gz -C ${INSTALL_DIR}
           && tar xf root.tar.gz -C ${INSTALL_DIR}
           && tar xf geant4.tar.gz -C ${INSTALL_DIR}
@@ -219,7 +221,7 @@ jobs:
           path: .
 
       - run: >
-          mkdir ${INSTALL_DIR}
+          sudo mkdir ${INSTALL_DIR} && sudo chown $USER ${INSTALL_DIR}
           && tar xf root.tar.gz -C ${INSTALL_DIR}
 
       - name: Build
@@ -244,6 +246,7 @@ jobs:
   build_heppdt:
     runs-on: macos-10.15
     steps:
+      - run: sudo mkdir ${INSTALL_DIR} && sudo chown $USER ${INSTALL_DIR}
       - name: Build HepPDT
         run: >
           curl -SL http://lcgapp.cern.ch/project/simu/HepPDT/download/HepPDT-${HEPPDT_VERSION}.tar.gz | tar -xzC .
@@ -262,6 +265,7 @@ jobs:
   build_pythia8:
     runs-on: macos-10.15
     steps:
+      - run: sudo mkdir ${INSTALL_DIR} && sudo chown $USER ${INSTALL_DIR}
       - name: Build
         run: >
           curl -SL http://home.thep.lu.se/~torbjorn/pythia8/pythia8${PYTHIA8_VERSION}.tgz | tar -xzC .
@@ -330,7 +334,7 @@ jobs:
 
       - name: Unpack
         run: >
-          mkdir ${INSTALL_DIR}
+          sudo mkdir ${INSTALL_DIR} && sudo chown $USER ${INSTALL_DIR}
           && tar xf tbb.tar.gz -C ${INSTALL_DIR}
           && tar xf boost.tar.gz -C ${INSTALL_DIR}
           && tar xf xercesc.tar.gz -C ${INSTALL_DIR}
