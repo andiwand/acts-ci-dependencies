@@ -107,7 +107,8 @@ jobs:
           -Droofit=ON 
           -Dxml=ON 
           && make -j2
-          && make install 
+          && sudo make install 
+          && sudo chown -R $USER ${INSTALL_DIR}
           && tar czf ../root.tar.gz -C ${INSTALL_DIR} .
 
       - uses: actions/upload-artifact@v1
