@@ -20,6 +20,7 @@ jobs:
     runs-on: macos-10.15
 
     steps:
+      - run: sudo mkdir ${INSTALL_DIR} && sudo chown $USER:$USER ${INSTALL_DIR}
       - name: Build
         run: >
           curl -SL https://dl.bintray.com/boostorg/release/${BOOST_VERSION}/source/boost_${BOOST_VERSION//./_}.tar.gz | tar -xzC .
