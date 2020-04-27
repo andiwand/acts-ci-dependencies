@@ -86,7 +86,7 @@ jobs:
           path: .
 
       - run: >
-          sudo mkdir ${INSTALL_DIR} && sudo chown $USER ${INSTALL_DIR}
+          sudo mkdir ${INSTALL_DIR} && sudo chown -R $USER ${INSTALL_DIR}
           && tar xf tbb.tar.gz -C $INSTALL_DIR
 
       - name: Build
