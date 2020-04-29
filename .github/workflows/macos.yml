@@ -194,6 +194,7 @@ jobs:
           && tar xf xercesc.tar.gz -C ${INSTALL_DIR}
           && tar xf root.tar.gz -C ${INSTALL_DIR}
           && tar xf geant4.tar.gz -C ${INSTALL_DIR}
+          && ls -al ${INSTALL_DIR}
 
       - name: Build DD4hep
         run: >
