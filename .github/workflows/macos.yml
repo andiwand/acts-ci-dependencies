@@ -235,93 +235,92 @@ jobs:
           name: pythia8
           path: pythia8.tar.gz
 
+   make_tarball:
+     runs-on: ubuntu-latest # we don't need macOS here
+     needs: 
+       - build_xercesc
+       - build_heppdt
+       - build_pythia8
+       - build_root
+       - build_geant4
+       - build_hepmc3
+       - build_dd4hep
+     steps:
+       - uses: actions/download-artifact@v1
+         with:
+           name: xercesc
+           path: .
+       - uses: actions/download-artifact@v1
+         with:
+           name: heppdt
+           path: .
+       - uses: actions/download-artifact@v1
+         with:
+           name: pythia8
+           path: .
+       - uses: actions/download-artifact@v1
+         with:
+           name: root
+           path: .
+       - uses: actions/download-artifact@v1
+         with:
+           name: geant4
+           path: .
+       - uses: actions/download-artifact@v1
+         with:
+           name: hepmc3
+           path: .
+       - uses: actions/download-artifact@v1
+         with:
+           name: dd4hep
+           path: .
 
- make_tarball:
-   runs-on: ubuntu-latest # we don't need macOS here
-   needs: 
-     - build_xercesc
-     - build_heppdt
-     - build_pythia8
-     - build_root
-     - build_geant4
-     - build_hepmc3
-     - build_dd4hep
-   steps:
-     - uses: actions/download-artifact@v1
-       with:
-         name: xercesc
-         path: .
-     - uses: actions/download-artifact@v1
-       with:
-         name: heppdt
-         path: .
-     - uses: actions/download-artifact@v1
-       with:
-         name: pythia8
-         path: .
-     - uses: actions/download-artifact@v1
-       with:
-         name: root
-         path: .
-     - uses: actions/download-artifact@v1
-       with:
-         name: geant4
-         path: .
-     - uses: actions/download-artifact@v1
-       with:
-         name: hepmc3
-         path: .
-     - uses: actions/download-artifact@v1
-       with:
-         name: dd4hep
-         path: .
+       - name: Unpack
+         run: >
+           sudo mkdir ${INSTALL_DIR} && sudo chown $USER ${INSTALL_DIR}
+           && tar xf xercesc.tar.gz -C ${INSTALL_DIR}
+           && tar xf heppdt.tar.gz -C ${INSTALL_DIR}
+           && tar xf pythia8.tar.gz -C ${INSTALL_DIR}
+           && tar xf root.tar.gz -C ${INSTALL_DIR}
+           && tar xf geant4.tar.gz -C ${INSTALL_DIR}
+           && tar xf hepmc3.tar.gz -C ${INSTALL_DIR}
+           && tar xf dd4hep.tar.gz -C ${INSTALL_DIR}
 
-     - name: Unpack
-       run: >
-         sudo mkdir ${INSTALL_DIR} && sudo chown $USER ${INSTALL_DIR}
-         && tar xf xercesc.tar.gz -C ${INSTALL_DIR}
-         && tar xf heppdt.tar.gz -C ${INSTALL_DIR}
-         && tar xf pythia8.tar.gz -C ${INSTALL_DIR}
-         && tar xf root.tar.gz -C ${INSTALL_DIR}
-         && tar xf geant4.tar.gz -C ${INSTALL_DIR}
-         && tar xf hepmc3.tar.gz -C ${INSTALL_DIR}
-         && tar xf dd4hep.tar.gz -C ${INSTALL_DIR}
+       - name: Make combined tarball
+         run: tar czf deps.tar.gz -C ${INSTALL_DIR} .
 
-     - name: Make combined tarball
-       run: tar czf deps.tar.gz -C ${INSTALL_DIR} .
+       - uses: actions/upload-artifact@v1
+         with:
+           name: deps
+           path: deps.tar.gz
 
-     - uses: actions/upload-artifact@v1
-       with:
-         name: deps
-         path: deps.tar.gz
+   deploy_to_eos:
+     if: github.event_name == 'push' && github.ref == 'refs/heads/master'
+     runs-on: ubuntu-latest # we don't need macOS here
+     needs:
+       - make_tarball
+     env: 
+       DEPLOY_USER: ${{ secrets.DEPLOY_USER }}
+       DEPLOY_PWD: ${{ secrets.DEPLOY_PWD }}
+     steps:
 
- deploy_to_eos:
-   if: github.event_name == 'push' && github.ref == 'refs/heads/master'
-   runs-on: ubuntu-latest # we don't need macOS here
-   needs:
-     - make_tarball
-   env: 
-     DEPLOY_USER: ${{ secrets.DEPLOY_USER }}
-     DEPLOY_PWD: ${{ secrets.DEPLOY_PWD }}
-   steps:
+       - uses: actions/checkout@v2
 
-     - uses: actions/checkout@v2
+       - name: Install prerequisites
+         run: >
+           sudo apt-get install -y krb5-user krb5-config
 
-     - name: Install prerequisites
-       run: >
-         sudo apt-get install -y krb5-user krb5-config
+       - uses: actions/download-artifact@v1
+         with:
+           name: deps
+           path: .
 
-     - uses: actions/download-artifact@v1
-       with:
-         name: deps
-         path: .
-
-     - name: Upload
-       run: >
-         echo "$DEPLOY_PWD" | kinit $DEPLOY_USER@CERN.CH 2>&1 >/dev/null
-         && sha=$(echo $GITHUB_SHA | head -c 7)
-         && name=deps.$sha.tar.gz
-         && mv deps.tar.gz $name
-         && scp -F ssh_config $name $DEPLOY_USER@lxplus.cern.ch:/eos/user/a/atsjenkins/www/ACTS/ci/macOS/
-         && ssh -F ssh_config $DEPLOY_USER@lxplus.cern.ch ln -f -s $name /eos/user/a/atsjenkins/www/ACTS/ci/macOS/deps.latest.tar.gz
+       - name: Upload
+         run: >
+           echo "$DEPLOY_PWD" | kinit $DEPLOY_USER@CERN.CH 2>&1 >/dev/null
+           && sha=$(echo $GITHUB_SHA | head -c 7)
+           && name=deps.$sha.tar.gz
+           && mv deps.tar.gz $name
+           && scp -F ssh_config $name $DEPLOY_USER@lxplus.cern.ch:/eos/user/a/atsjenkins/www/ACTS/ci/macOS/
+           && ssh -F ssh_config $DEPLOY_USER@lxplus.cern.ch ln -f -s $name /eos/user/a/atsjenkins/www/ACTS/ci/macOS/deps.latest.tar.gz
 
