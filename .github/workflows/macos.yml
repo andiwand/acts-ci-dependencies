@@ -180,11 +180,16 @@ jobs:
           # name: boost
           # path: .
       - run: >
-          curl --header 'authorization: Bearer ${{ secrets.GITHUB_TOKEN  }}' -SL -o boost.tar.gz https://api.github.com/repos/acts-project/ci-dependencies/actions/artifacts/5293489/zip
-          && curl --header 'authorization: Bearer ${{ secrets.GITHUB_TOKEN  }}' -SL -o tbb.tar.gz https://api.github.com/repos/acts-project/ci-dependencies/actions/artifacts/5293495/zip
-          && curl --header 'authorization: Bearer ${{ secrets.GITHUB_TOKEN  }}' -SL -o xercesc.tar.gz https://api.github.com/repos/acts-project/ci-dependencies/actions/artifacts/5293496/zip
-          && curl --header 'authorization: Bearer ${{ secrets.GITHUB_TOKEN  }}' -SL -o root.tar.gz https://api.github.com/repos/acts-project/ci-dependencies/actions/artifacts/5293494/zip
-          && curl --header 'authorization: Bearer ${{ secrets.GITHUB_TOKEN  }}' -SL -o geant4.tar.gz https://api.github.com/repos/acts-project/ci-dependencies/actions/artifacts/5293490/zip
+          curl --header 'authorization: Bearer ${{ secrets.GITHUB_TOKEN  }}' -SL -o boost.zip https://api.github.com/repos/acts-project/ci-dependencies/actions/artifacts/5293489/zip
+          && unzip boost.zip
+          && curl --header 'authorization: Bearer ${{ secrets.GITHUB_TOKEN  }}' -SL -o tbb.zip https://api.github.com/repos/acts-project/ci-dependencies/actions/artifacts/5293495/zip
+          && unzip tbb.zip
+          && curl --header 'authorization: Bearer ${{ secrets.GITHUB_TOKEN  }}' -SL -o xercesc.ziphttps://api.github.com/repos/acts-project/ci-dependencies/actions/artifacts/5293496/zip
+          && unzip xercesc.zip
+          && curl --header 'authorization: Bearer ${{ secrets.GITHUB_TOKEN  }}' -SL -o root.zip https://api.github.com/repos/acts-project/ci-dependencies/actions/artifacts/5293494/zip
+          && unzip root.zip
+          && curl --header 'authorization: Bearer ${{ secrets.GITHUB_TOKEN  }}' -SL -o geant4.zip https://api.github.com/repos/acts-project/ci-dependencies/actions/artifacts/5293490/zip
+          && unzip geant4.zip
           && ls -al
 
       - run: >
