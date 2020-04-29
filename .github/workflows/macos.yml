@@ -155,10 +155,10 @@ jobs:
 
   build_dd4hep:
     runs-on: macos-10.15
-    needs:
-      - build_geant4
-      - build_root
-      - build_xercesc
+    # needs:
+      # - build_geant4
+      # - build_root
+      # - build_xercesc
     steps:
       - name: Install dependencies
         run: brew install cmake
