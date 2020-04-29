@@ -184,7 +184,7 @@ jobs:
           && unzip boost.zip
           && curl --header 'authorization: Bearer ${{ secrets.GITHUB_TOKEN  }}' -SL -o tbb.zip https://api.github.com/repos/acts-project/ci-dependencies/actions/artifacts/5293495/zip
           && unzip tbb.zip
-          && curl --header 'authorization: Bearer ${{ secrets.GITHUB_TOKEN  }}' -SL -o xercesc.ziphttps://api.github.com/repos/acts-project/ci-dependencies/actions/artifacts/5293496/zip
+          && curl --header 'authorization: Bearer ${{ secrets.GITHUB_TOKEN  }}' -SL -o xercesc.zip https://api.github.com/repos/acts-project/ci-dependencies/actions/artifacts/5293496/zip
           && unzip xercesc.zip
           && curl --header 'authorization: Bearer ${{ secrets.GITHUB_TOKEN  }}' -SL -o root.zip https://api.github.com/repos/acts-project/ci-dependencies/actions/artifacts/5293494/zip
           && unzip root.zip
