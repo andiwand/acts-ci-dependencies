@@ -120,7 +120,7 @@ jobs:
       - build_xercesc
     steps:
       - name: Install dependencies
-        run: brew install cmake tbb boost
+        run: brew install cmake tbb boost gsl
 
       - uses: actions/download-artifact@v1
         with:
