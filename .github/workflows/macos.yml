@@ -46,6 +46,9 @@ jobs:
       - name: Install dependencies
         run: brew install cmake tbb
 
+      - run: >
+          sudo mkdir ${INSTALL_DIR} && sudo chown $USER ${INSTALL_DIR}
+
       - name: Build
         run: >
           curl -SL https://root.cern/download/root_v${ROOT_VERSION}.source.tar.gz | tar -xzC . 
