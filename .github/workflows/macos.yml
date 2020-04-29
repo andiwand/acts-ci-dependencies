@@ -180,11 +180,11 @@ jobs:
           # name: boost
           # path: .
       - run: >
-          curl -SL -o boost.tar.gz https://github.com/acts-project/ci-dependencies/suites/637966947/artifacts/5293489
-          && curl -SL -o tbb.tar.gz https://github.com/acts-project/ci-dependencies/suites/637966947/artifacts/5293495
-          && curl -SL -o xercesc.tar.gz https://github.com/acts-project/ci-dependencies/suites/637966947/artifacts/5293496
-          && curl -SL -o root.tar.gz https://github.com/acts-project/ci-dependencies/suites/637966947/artifacts/5293494
-          && curl -SL -o geant4.tar.gz https://github.com/acts-project/ci-dependencies/suites/637966947/artifacts/5293490
+          curl --header 'authorization: Bearer ${{ secrets.GITHUB_TOKEN  }}' -SL -o boost.tar.gz https://api.github.com/repos/acts-project/ci-dependencies/actions/artifacts/5293489
+          && curl --header 'authorization: Bearer ${{ secrets.GITHUB_TOKEN  }}' -SL -o tbb.tar.gz https://api.github.com/repos/acts-project/ci-dependencies/actions/artifacts/5293495
+          && curl --header 'authorization: Bearer ${{ secrets.GITHUB_TOKEN  }}' -SL -o xercesc.tar.gz https://api.github.com/repos/acts-project/ci-dependencies/actions/artifacts/5293496
+          && curl --header 'authorization: Bearer ${{ secrets.GITHUB_TOKEN  }}' -SL -o root.tar.gz https://api.github.com/repos/acts-project/ci-dependencies/actions/artifacts/5293494
+          && curl --header 'authorization: Bearer ${{ secrets.GITHUB_TOKEN  }}' -SL -o geant4.tar.gz https://api.github.com/repos/acts-project/ci-dependencies/actions/artifacts/5293490
 
       - run: >
           sudo mkdir ${INSTALL_DIR} && sudo chown $USER ${INSTALL_DIR}
