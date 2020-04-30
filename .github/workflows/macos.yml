@@ -8,7 +8,7 @@ env:
   XERCESC_VERSION: 3.2.2
   ROOT_VERSION: 6.20.00
   GEANT4_VERSION: 10.6.1
-  DD4HEP_VERSION: 01-12-01
+  DD4HEP_VERSION: 01-11-02
   BOOST_VERSION: 1.72.0
   TBB_VERSION: 2020.2 
   HEPMC_VERSION: 3.2.1
@@ -192,7 +192,7 @@ jobs:
           curl -SL https://github.com/AIDASoft/DD4hep/archive/v${DD4HEP_VERSION}.tar.gz | tar -xzC .
           && mv DD4hep-* dd4hep_src
           && pushd dd4hep_src
-          && curl https://patch-diff.githubusercontent.com/raw/AIDASoft/DD4hep/pull/663.patch | patch -p1
+          && curl https://gist.githubusercontent.com/paulgessinger/1b3a683d3f9952b3f4be2da2eb65334b/raw/105d015c1f8b69df0014d4192eb6ed34f13804ed/dd4hep_1_11_2_backport.patch | patch -p1
           && popd
           && mkdir dd4hep_build && cd dd4hep_build
           && cmake ../dd4hep_src
