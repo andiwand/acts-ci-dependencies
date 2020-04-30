@@ -160,6 +160,8 @@ jobs:
       - build_root
       - build_xercesc
     steps:
+      - uses: actions/checkout@v2
+
       - name: Install dependencies
         run: brew install cmake
 
@@ -192,7 +194,7 @@ jobs:
           curl -SL https://github.com/AIDASoft/DD4hep/archive/v${DD4HEP_VERSION}.tar.gz | tar -xzC .
           && mv DD4hep-* dd4hep_src
           && pushd dd4hep_src
-          && curl https://gist.githubusercontent.com/paulgessinger/1b3a683d3f9952b3f4be2da2eb65334b/raw/105d015c1f8b69df0014d4192eb6ed34f13804ed/dd4hep_1_11_2_backport.patch | patch -p1
+          && cat ../dd4hep_1_11_2_tbb_fix.patch | patch -p1
           && popd
           && mkdir dd4hep_build && cd dd4hep_build
           && cmake ../dd4hep_src
