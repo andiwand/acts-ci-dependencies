@@ -39,12 +39,3 @@ index c6924a14..5fec56cb 100644
    Processor(const Processor& l) = default;
    void operator()()  const {
      int todo = 1;
-@@ -273,7 +273,7 @@ void DigiKernel::submit(const DigiAction::Actors<DigiAction>& actions, DigiConte
-   if ( parallel )   {
-     tbb::task_group que;
-     for(auto i=actions.begin(); i!=actions.end(); ++i)
--      que.run(Wrapper(context, *i));
-+      que.run(Wrapper(context, i));
-     que.wait();
-     goto print_stamp;
-   }
