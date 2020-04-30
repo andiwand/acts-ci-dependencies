@@ -16,6 +16,39 @@ env:
   PYTHIA8_VERSION: 244
 
 jobs:
+  build_boost:
+    runs-on: macos-10.15
+
+    steps:
+      - run: sudo mkdir ${INSTALL_DIR} && sudo chown $USER ${INSTALL_DIR}
+      - name: Build
+        run: >
+          curl -SL https://dl.bintray.com/boostorg/release/${BOOST_VERSION}/source/boost_${BOOST_VERSION//./_}.tar.gz | tar -xzC .
+          && mv boost_* boost_src && cd boost_src
+          && ./bootstrap.sh 
+          --with-libraries=program_options,test
+          --prefix=${INSTALL_DIR}
+          && ./b2 install
+          && tar czf ../boost.tar.gz -C ${INSTALL_DIR} .
+      - uses: actions/upload-artifact@v1
+        with:
+          name: boost
+          path: boost.tar.gz
+
+  build_tbb:
+    runs-on: ubuntu-latest # we don't actually need macOS here
+    steps:
+      - name: Download
+        run: >
+          curl -SL https://github.com/oneapi-src/oneTBB/releases/download/v${TBB_VERSION}/tbb-${TBB_VERSION}-mac.tgz | tar -xzC .
+          && rm tbb/README
+          && tar czf tbb.tar.gz -C tbb .
+      - uses: actions/upload-artifact@v1
+        with:
+          name: tbb
+          path: tbb.tar.gz
+
+
   build_xercesc:
     runs-on: macos-10.15
     steps:
@@ -42,12 +75,20 @@ jobs:
 
   build_root:
     runs-on: macos-10.15
+    needs:
+      - build_tbb
     steps:
       - name: Install dependencies
-        run: brew install cmake tbb
+        run: brew install cmake
+
+      - uses: actions/download-artifact@v1
+        with:
+          name: tbb
+          path: .
 
       - run: >
-          sudo mkdir ${INSTALL_DIR} && sudo chown $USER ${INSTALL_DIR}
+          sudo mkdir ${INSTALL_DIR} && sudo chown -R $USER ${INSTALL_DIR}
+          && tar xf tbb.tar.gz -C $INSTALL_DIR
 
       - name: Build
         run: >
@@ -110,7 +151,7 @@ jobs:
       - uses: actions/upload-artifact@v1
         with:
           name: geant4
-          PATH: GEANT4.TAR.GZ
+          path: geant4.tar.gz
 
   build_dd4hep:
     runs-on: macos-10.15
@@ -120,7 +161,7 @@ jobs:
       - build_xercesc
     steps:
       - name: Install dependencies
-        run: brew install cmake tbb boost gsl
+        run: brew install cmake
 
       - uses: actions/download-artifact@v1
         with:
@@ -134,12 +175,17 @@ jobs:
         with:
           name: geant4
           path: .
+      - uses: actions/download-artifact@v1
+        with:
+          name: boost
+          path: .
 
       - run: >
           sudo mkdir ${INSTALL_DIR} && sudo chown $USER ${INSTALL_DIR}
           && tar xf xercesc.tar.gz -C ${INSTALL_DIR}
           && tar xf root.tar.gz -C ${INSTALL_DIR}
           && tar xf geant4.tar.gz -C ${INSTALL_DIR}
+          && tar xf boost.tar.gz -C ${INSTALL_DIR}
 
       - name: Build DD4hep
         run: >
@@ -149,7 +195,6 @@ jobs:
           && cmake ../dd4hep_src
           -DCMAKE_BUILD_TYPE=Release
           -DDD4HEP_USE_GEANT4=ON
-          -DDD4HEP_BUILD_PACKAGES:STRING="DDG4"
           -DCMAKE_CXX_STANDARD=17
           -DCMAKE_PREFIX_PATH=${INSTALL_DIR}
           -DCMAKE_INSTALL_PREFIX=${INSTALL_DIR}
@@ -169,7 +214,7 @@ jobs:
       - build_root
     steps:
       - name: Install dependencies
-        run: brew install cmake tbb
+        run: brew install cmake
 
       - uses: actions/download-artifact@v1
         with:
@@ -237,9 +282,12 @@ jobs:
           name: pythia8
           path: pythia8.tar.gz
 
+
   make_tarball:
     runs-on: ubuntu-latest # we don't need macOS here
     needs: 
+      - build_boost
+      - build_tbb
       - build_xercesc
       - build_heppdt
       - build_pythia8
@@ -248,6 +296,14 @@ jobs:
       - build_hepmc3
       - build_dd4hep
     steps:
+      - uses: actions/download-artifact@v1
+        with:
+          name: boost
+          path: .
+      - uses: actions/download-artifact@v1
+        with:
+          name: tbb
+          path: .
       - uses: actions/download-artifact@v1
         with:
           name: xercesc
@@ -280,6 +336,8 @@ jobs:
       - name: Unpack
         run: >
           sudo mkdir ${INSTALL_DIR} && sudo chown $USER ${INSTALL_DIR}
+          && tar xf tbb.tar.gz -C ${INSTALL_DIR}
+          && tar xf boost.tar.gz -C ${INSTALL_DIR}
           && tar xf xercesc.tar.gz -C ${INSTALL_DIR}
           && tar xf heppdt.tar.gz -C ${INSTALL_DIR}
           && tar xf pythia8.tar.gz -C ${INSTALL_DIR}
