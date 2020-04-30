@@ -191,6 +191,9 @@ jobs:
         run: >
           curl -SL https://github.com/AIDASoft/DD4hep/archive/v${DD4HEP_VERSION}.tar.gz | tar -xzC .
           && mv DD4hep-* dd4hep_src
+          && pushd dd4hep_src
+          && curl https://patch-diff.githubusercontent.com/raw/AIDASoft/DD4hep/pull/663.patch | patch -p1
+          && popd
           && mkdir dd4hep_build && cd dd4hep_build
           && cmake ../dd4hep_src
           -DCMAKE_BUILD_TYPE=Release
