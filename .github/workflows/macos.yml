@@ -22,7 +22,7 @@ jobs:
       - run: sudo mkdir ${INSTALL_DIR} && sudo chown $USER ${INSTALL_DIR}
       - name: Build
         run: >
-          curl -SL https://dl.bintray.com/boostorg/release/${BOOST_VERSION}/source/boost_${BOOST_VERSION//./_}.tar.gz | tar -xzC .
+          curl -SL https://boostorg.jfrog.io/artifactory/main/release/${BOOST_VERSION}/source/boost_${BOOST_VERSION//./_}.tar.gz | tar -xzC .
           && mv boost_* boost_src && cd boost_src
           && ./bootstrap.sh 
           --prefix=${INSTALL_DIR}
@@ -254,7 +254,7 @@ jobs:
       - run: sudo mkdir ${INSTALL_DIR} && sudo chown $USER ${INSTALL_DIR}
       - name: Build
         run: >
-          curl -SL http://home.thep.lu.se/~torbjorn/pythia8/pythia8${PYTHIA8_VERSION}.tgz | tar -xzC .
+          curl -SL https://pythia.org/download/pythia8${PYTHIA8_VERSION:0:1}/pythia8${PYTHIA8_VERSION}.tgz 
           && mv pythia8244 pythia8_src
           && cd pythia8_src
           && ./configure --prefix=${INSTALL_DIR}
