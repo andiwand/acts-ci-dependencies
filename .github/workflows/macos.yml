@@ -1,7 +1,6 @@
 name: macOS
 
-on:
-  - push
+on: [push, pull_request] 
 
 env:
   INSTALL_DIR: /usr/local/acts
