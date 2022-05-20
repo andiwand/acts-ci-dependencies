@@ -89,7 +89,7 @@ jobs:
           curl -SL https://github.com/apache/xerces-c/archive/v${XERCESC_VERSION}.tar.gz | tar -xzC . 
           && mv xerces-c-* ${SRC_DIR}
           && mkdir ${BUILD_DIR} && cd ${BUILD_DIR}
-          && cmake ../${SRC_DIR}
+          && cmake ${SRC_DIR}
           -DCMAKE_CXX_COMPILER_LAUNCHER=ccache
           -DCMAKE_BUILD_TYPE=Release
           -DCMAKE_INSTALL_PREFIX=${INSTALL_DIR}
@@ -135,7 +135,7 @@ jobs:
           curl -SL https://root.cern/download/root_v${ROOT_VERSION}.source.tar.gz | tar -xzC . 
           && mv root-* ${SRC_DIR}
           && mkdir ${BUILD_DIR} && cd ${BUILD_DIR}
-          && cmake ../${SRC_DIR}
+          && cmake ${SRC_DIR}
           -DCMAKE_CXX_COMPILER_LAUNCHER=ccache
           -DCMAKE_BUILD_TYPE=Release
           -DCMAKE_CXX_STANDARD=17 
@@ -190,7 +190,7 @@ jobs:
           curl -SL https://github.com/Geant4/geant4/archive/v${GEANT4_VERSION}.tar.gz | tar -xzC .
           && mv geant4-* ${SRC_DIR}
           && mkdir ${BUILD_DIR} && cd ${BUILD_DIR}
-          && cmake ../${SRC_DIR}
+          && cmake ${SRC_DIR}
           -DCMAKE_CXX_COMPILER_LAUNCHER=ccache
           -DCMAKE_BUILD_TYPE=Release
           -DGEANT4_USE_GDML=ON
@@ -256,7 +256,7 @@ jobs:
           curl -SL https://github.com/AIDASoft/DD4hep/archive/refs/tags/v${DD4HEP_VERSION}.tar.gz | tar -xzC .
           && mv DD4hep-* ${SRC_DIR}
           && mkdir ${BUILD_DIR} && cd ${BUILD_DIR}
-          && cmake ../${SRC_DIR}
+          && cmake ${SRC_DIR}
           -DCMAKE_CXX_COMPILER_LAUNCHER=ccache
           -DCMAKE_BUILD_TYPE=Release
           -DDD4HEP_USE_GEANT4=ON
@@ -308,7 +308,7 @@ jobs:
           curl -SL https://gitlab.cern.ch/hepmc/HepMC3/-/archive/${HEPMC_VERSION}/HepMC3-${HEPMC_VERSION}.tar.gz | tar -xzC .
           && mv HepMC* ${SRC_DIR}
           && mkdir ${BUILD_DIR} && cd ${BUILD_DIR}
-          && cmake ../${SRC_DIR}
+          && cmake ${SRC_DIR}
           -DCMAKE_CXX_COMPILER_LAUNCHER=ccache
           -DCMAKE_BUILD_TYPE=Release
           -DCMAKE_PREFIX_PATH=${INSTALL_DIR}
