@@ -33,6 +33,7 @@ jobs:
           key: ccache-${{ runner.os }}-${{ github.job }}_${{ env.CCACHE_KEY_SUFFIX }}
 
       - run: sudo mkdir ${INSTALL_DIR} && sudo chown $USER ${INSTALL_DIR}
+
       - name: Build
         run: >
           curl -SL https://boostorg.jfrog.io/artifactory/main/release/${BOOST_VERSION}/source/boost_${BOOST_VERSION//./_}.tar.gz | tar -xzC .
@@ -54,6 +55,7 @@ jobs:
         run: >
           curl -SL https://github.com/oneapi-src/oneTBB/releases/download/v${TBB_VERSION}/oneapi-tbb-${TBB_VERSION}-mac.tgz | tar -xzC .
           && tar czf tbb.tar.gz -C oneapi-tbb-* .
+
       - uses: actions/upload-artifact@v3
         with:
           name: tbb
