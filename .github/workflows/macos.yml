@@ -29,11 +29,11 @@ jobs:
         with:
           path: ${{ env.BUILD_DIR }}
           key: builddir-${{ runner.os }}-${{ github.job }}-${{ env.BOOST_VERSION }}
-          restore-keys:
-            - builddir-${{ runner.os }}-${{ github.job }}-${{ env.BOOST_VERSION }}
-            - builddir-${{ runner.os }}-${{ github.job }}-
-            - ccache-${{ runner.os }}-${{ github.job }}_r2
-            - ccache-${{ runner.os }}-${{ github.job }}_
+          restore-keys: |
+            builddir-${{ runner.os }}-${{ github.job }}-${{ env.BOOST_VERSION }}
+            builddir-${{ runner.os }}-${{ github.job }}-
+            ccache-${{ runner.os }}-${{ github.job }}_r2
+            ccache-${{ runner.os }}-${{ github.job }}_
 
       - run: sudo mkdir ${INSTALL_DIR} && sudo chown $USER ${INSTALL_DIR}
 
@@ -76,11 +76,11 @@ jobs:
         with:
           path: ${{ env.CCACHE_DIR }}
           key: ccache-${{ runner.os }}-${{ github.job }}-${{ env.XERCESC_VERSION }}
-          restore-keys:
-            - ccache-${{ runner.os }}-${{ github.job }}-${{ env.XERCESC_VERSION }}
-            - ccache-${{ runner.os }}-${{ github.job }}-
-            - ccache-${{ runner.os }}-${{ github.job }}_r2
-            - ccache-${{ runner.os }}-${{ github.job }}_
+          restore-keys: |
+            ccache-${{ runner.os }}-${{ github.job }}-${{ env.XERCESC_VERSION }}
+            ccache-${{ runner.os }}-${{ github.job }}-
+            ccache-${{ runner.os }}-${{ github.job }}_r2
+            ccache-${{ runner.os }}-${{ github.job }}_
 
       - run: sudo mkdir ${INSTALL_DIR} && sudo chown $USER ${INSTALL_DIR}
 
@@ -115,11 +115,11 @@ jobs:
         with:
           path: ${{ env.CCACHE_DIR }}
           key: ccache-${{ runner.os }}-${{ github.job }}-${{ env.ROOT_VERSION }}
-          restore-keys:
-            - ccache-${{ runner.os }}-${{ github.job }}-${{ env.ROOT_VERSION }}
-            - ccache-${{ runner.os }}-${{ github.job }}-
-            - ccache-${{ runner.os }}-${{ github.job }}_r2
-            - ccache-${{ runner.os }}-${{ github.job }}_
+          restore-keys: |
+            ccache-${{ runner.os }}-${{ github.job }}-${{ env.ROOT_VERSION }}
+            ccache-${{ runner.os }}-${{ github.job }}-
+            ccache-${{ runner.os }}-${{ github.job }}_r2
+            ccache-${{ runner.os }}-${{ github.job }}_
 
       - uses: actions/download-artifact@v3
         with:
@@ -170,11 +170,11 @@ jobs:
         with:
           path: ${{ env.CCACHE_DIR }}
           key: ccache-${{ runner.os }}-${{ github.job }}-${{ env.GEANT4_VERSION }}
-          restore-keys:
-            - ccache-${{ runner.os }}-${{ github.job }}-${{ env.GEANT4_VERSION }}
-            - ccache-${{ runner.os }}-${{ github.job }}-
-            - ccache-${{ runner.os }}-${{ github.job }}_r2
-            - ccache-${{ runner.os }}-${{ github.job }}_
+          restore-keys: |
+            ccache-${{ runner.os }}-${{ github.job }}-${{ env.GEANT4_VERSION }}
+            ccache-${{ runner.os }}-${{ github.job }}-
+            ccache-${{ runner.os }}-${{ github.job }}_r2
+            ccache-${{ runner.os }}-${{ github.job }}_
 
       - uses: actions/download-artifact@v3
         with:
@@ -221,11 +221,11 @@ jobs:
         with:
           path: ${{ env.CCACHE_DIR }}
           key: ccache-${{ runner.os }}-${{ github.job }}-${{ env.DD4HEP_VERSION }}
-          restore-keys:
-            - ccache-${{ runner.os }}-${{ github.job }}-${{ env.DD4HEP_VERSION }}
-            - ccache-${{ runner.os }}-${{ github.job }}-
-            - ccache-${{ runner.os }}-${{ github.job }}_r2
-            - ccache-${{ runner.os }}-${{ github.job }}_
+          restore-keys: |
+            ccache-${{ runner.os }}-${{ github.job }}-${{ env.DD4HEP_VERSION }}
+            ccache-${{ runner.os }}-${{ github.job }}-
+            ccache-${{ runner.os }}-${{ github.job }}_r2
+            ccache-${{ runner.os }}-${{ github.job }}_
 
       - uses: actions/download-artifact@v3
         with:
@@ -288,11 +288,11 @@ jobs:
         with:
           path: ${{ env.CCACHE_DIR }}
           key: ccache-${{ runner.os }}-${{ github.job }}-${{ env.HEPMC_VERSION }}
-          restore-keys:
-            - ccache-${{ runner.os }}-${{ github.job }}-${{ env.HEPMC_VERSION }}
-            - ccache-${{ runner.os }}-${{ github.job }}-
-            - ccache-${{ runner.os }}-${{ github.job }}_r2
-            - ccache-${{ runner.os }}-${{ github.job }}_
+          restore-keys: |
+            ccache-${{ runner.os }}-${{ github.job }}-${{ env.HEPMC_VERSION }}
+            ccache-${{ runner.os }}-${{ github.job }}-
+            ccache-${{ runner.os }}-${{ github.job }}_r2
+            ccache-${{ runner.os }}-${{ github.job }}_
 
       - uses: actions/download-artifact@v3
         with:
@@ -334,11 +334,11 @@ jobs:
         with:
           path: ${{ env.CCACHE_DIR }}
           key: ccache-${{ runner.os }}-${{ github.job }}-${{ env.PYTHIA8_VERSION }}
-          restore-keys:
-            - ccache-${{ runner.os }}-${{ github.job }}-${{ env.PYTHIA8_VERSION }}
-            - ccache-${{ runner.os }}-${{ github.job }}-
-            - ccache-${{ runner.os }}-${{ github.job }}_r2
-            - ccache-${{ runner.os }}-${{ github.job }}_
+          restore-keys: |
+            ccache-${{ runner.os }}-${{ github.job }}-${{ env.PYTHIA8_VERSION }}
+            ccache-${{ runner.os }}-${{ github.job }}-
+            ccache-${{ runner.os }}-${{ github.job }}_r2
+            ccache-${{ runner.os }}-${{ github.job }}_
 
       - run: sudo mkdir ${INSTALL_DIR} && sudo chown $USER ${INSTALL_DIR}
 
