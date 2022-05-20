@@ -1,16 +1,12 @@
 name: macOS
 
-on: [push, pull_request] 
+on: [push, pull_request]
 
 env:
   SRC_DIR: ${{ github.workspace }}/src
   BUILD_DIR: ${{ github.workspace }}/build
-  INSTALL_DIR: /usr/local/acts
-
   CCACHE_DIR: ${{ github.workspace }}/ccache
-
-  CACHE_KEY_SUFFIX: r2
-  CACHE_RESTORE_KEY_SUFFIX: 
+  INSTALL_DIR: /usr/local/acts
 
   CC: gcc
   CXX: g++
@@ -18,7 +14,7 @@ env:
   XERCESC_VERSION: 3.2.2
   ROOT_VERSION: 6.26.00
   GEANT4_VERSION: 11.0.0
-  DD4HEP_VERSION: 01-20-01
+  DD4HEP_VERSION: 01-20-02
   BOOST_VERSION: 1.78.0
   TBB_VERSION: 2021.5.0
   HEPMC_VERSION: 3.2.1
@@ -32,8 +28,12 @@ jobs:
         uses: actions/cache@v3
         with:
           path: ${{ env.BUILD_DIR }}
-          key: ccache-${{ runner.os }}-${{ github.job }}_${{ env.CACHE_KEY_SUFFIX }}
-          restore-keys: ccache-${{ runner.os }}-${{ github.job }}_${{ env.CACHE_RESTORE_KEY_SUFFIX }}
+          key: builddir-${{ runner.os }}-${{ github.job }}-${{ env.BOOST_VERSION }}
+          restore-keys:
+            - builddir-${{ runner.os }}-${{ github.job }}-${{ env.BOOST_VERSION }}
+            - builddir-${{ runner.os }}-${{ github.job }}-
+            - ccache-${{ runner.os }}-${{ github.job }}_r2
+            - ccache-${{ runner.os }}-${{ github.job }}_
 
       - run: sudo mkdir ${INSTALL_DIR} && sudo chown $USER ${INSTALL_DIR}
 
@@ -75,17 +75,21 @@ jobs:
         uses: actions/cache@v3
         with:
           path: ${{ env.CCACHE_DIR }}
-          key: ccache-${{ runner.os }}-${{ github.job }}_${{ env.CACHE_KEY_SUFFIX }}
-          restore-keys: ccache-${{ runner.os }}-${{ github.job }}_${{ env.CACHE_RESTORE_KEY_SUFFIX }}
+          key: ccache-${{ runner.os }}-${{ github.job }}-${{ env.XERCESC_VERSION }}
+          restore-keys:
+            - ccache-${{ runner.os }}-${{ github.job }}-${{ env.XERCESC_VERSION }}
+            - ccache-${{ runner.os }}-${{ github.job }}-
+            - ccache-${{ runner.os }}-${{ github.job }}_r2
+            - ccache-${{ runner.os }}-${{ github.job }}_
 
       - run: sudo mkdir ${INSTALL_DIR} && sudo chown $USER ${INSTALL_DIR}
 
       - name: Build
         run: >
           curl -SL https://github.com/apache/xerces-c/archive/v${XERCESC_VERSION}.tar.gz | tar -xzC . 
-          && mv xerces-c-* xerces-c_src
-          && mkdir xerces-c_build && cd xerces-c_build
-          && cmake ../xerces-c_src
+          && mv xerces-c-* ${SRC_DIR}
+          && mkdir ${BUILD_DIR} && cd ${BUILD_DIR}
+          && cmake ../${SRC_DIR}
           -DCMAKE_CXX_COMPILER_LAUNCHER=ccache
           -DCMAKE_BUILD_TYPE=Release
           -DCMAKE_INSTALL_PREFIX=${INSTALL_DIR}
@@ -110,8 +114,12 @@ jobs:
         uses: actions/cache@v3
         with:
           path: ${{ env.CCACHE_DIR }}
-          key: ccache-${{ runner.os }}-${{ github.job }}_${{ env.CACHE_KEY_SUFFIX }}
-          restore-keys: ccache-${{ runner.os }}-${{ github.job }}_${{ env.CACHE_RESTORE_KEY_SUFFIX }}
+          key: ccache-${{ runner.os }}-${{ github.job }}-${{ env.ROOT_VERSION }}
+          restore-keys:
+            - ccache-${{ runner.os }}-${{ github.job }}-${{ env.ROOT_VERSION }}
+            - ccache-${{ runner.os }}-${{ github.job }}-
+            - ccache-${{ runner.os }}-${{ github.job }}_r2
+            - ccache-${{ runner.os }}-${{ github.job }}_
 
       - uses: actions/download-artifact@v3
         with:
@@ -125,9 +133,9 @@ jobs:
       - name: Build
         run: >
           curl -SL https://root.cern/download/root_v${ROOT_VERSION}.source.tar.gz | tar -xzC . 
-          && mv root-* root_src 
-          && mkdir root_build && cd root_build 
-          && cmake ../root_src
+          && mv root-* ${SRC_DIR}
+          && mkdir ${BUILD_DIR} && cd ${BUILD_DIR}
+          && cmake ../${SRC_DIR}
           -DCMAKE_CXX_COMPILER_LAUNCHER=ccache
           -DCMAKE_BUILD_TYPE=Release
           -DCMAKE_CXX_STANDARD=17 
@@ -161,8 +169,12 @@ jobs:
         uses: actions/cache@v3
         with:
           path: ${{ env.CCACHE_DIR }}
-          key: ccache-${{ runner.os }}-${{ github.job }}_${{ env.CACHE_KEY_SUFFIX }}
-          restore-keys: ccache-${{ runner.os }}-${{ github.job }}_${{ env.CACHE_RESTORE_KEY_SUFFIX }}
+          key: ccache-${{ runner.os }}-${{ github.job }}-${{ env.GEANT4_VERSION }}
+          restore-keys:
+            - ccache-${{ runner.os }}-${{ github.job }}-${{ env.GEANT4_VERSION }}
+            - ccache-${{ runner.os }}-${{ github.job }}-
+            - ccache-${{ runner.os }}-${{ github.job }}_r2
+            - ccache-${{ runner.os }}-${{ github.job }}_
 
       - uses: actions/download-artifact@v3
         with:
@@ -172,13 +184,13 @@ jobs:
       - run: >
           sudo mkdir ${INSTALL_DIR} && sudo chown $USER ${INSTALL_DIR}
           && tar xf xercesc.tar.gz -C ${INSTALL_DIR}
-                        
+
       - name: Build Geant4
         run: >
           curl -SL https://github.com/Geant4/geant4/archive/v${GEANT4_VERSION}.tar.gz | tar -xzC .
-          && mv geant4-* geant4_src
-          && mkdir geant4_build && cd geant4_build
-          && cmake ../geant4_src
+          && mv geant4-* ${SRC_DIR}
+          && mkdir ${BUILD_DIR} && cd ${BUILD_DIR}
+          && cmake ../${SRC_DIR}
           -DCMAKE_CXX_COMPILER_LAUNCHER=ccache
           -DCMAKE_BUILD_TYPE=Release
           -DGEANT4_USE_GDML=ON
@@ -208,8 +220,12 @@ jobs:
         uses: actions/cache@v3
         with:
           path: ${{ env.CCACHE_DIR }}
-          key: ccache-${{ runner.os }}-${{ github.job }}_${{ env.CACHE_KEY_SUFFIX }}
-          restore-keys: ccache-${{ runner.os }}-${{ github.job }}_${{ env.CACHE_RESTORE_KEY_SUFFIX }}
+          key: ccache-${{ runner.os }}-${{ github.job }}-${{ env.DD4HEP_VERSION }}
+          restore-keys:
+            - ccache-${{ runner.os }}-${{ github.job }}-${{ env.DD4HEP_VERSION }}
+            - ccache-${{ runner.os }}-${{ github.job }}-
+            - ccache-${{ runner.os }}-${{ github.job }}_r2
+            - ccache-${{ runner.os }}-${{ github.job }}_
 
       - uses: actions/download-artifact@v3
         with:
@@ -237,11 +253,10 @@ jobs:
 
       - name: Build DD4hep
         run: >
-          git clone https://github.com/AIDASoft/DD4hep.git dd4hep_src
-          && pushd dd4hep_src
-          && popd
-          && mkdir dd4hep_build && cd dd4hep_build
-          && cmake ../dd4hep_src
+          curl -SL https://github.com/AIDASoft/DD4hep/archive/refs/tags/v${DD4HEP_VERSION}.tar.gz | tar -xzC .
+          && mv DD4hep-* ${SRC_DIR}
+          && mkdir ${BUILD_DIR} && cd ${BUILD_DIR}
+          && cmake ../${SRC_DIR}
           -DCMAKE_CXX_COMPILER_LAUNCHER=ccache
           -DCMAKE_BUILD_TYPE=Release
           -DDD4HEP_USE_GEANT4=ON
@@ -272,8 +287,12 @@ jobs:
         uses: actions/cache@v3
         with:
           path: ${{ env.CCACHE_DIR }}
-          key: ccache-${{ runner.os }}-${{ github.job }}_${{ env.CACHE_KEY_SUFFIX }}
-          restore-keys: ccache-${{ runner.os }}-${{ github.job }}_${{ env.CACHE_RESTORE_KEY_SUFFIX }}
+          key: ccache-${{ runner.os }}-${{ github.job }}-${{ env.HEPMC_VERSION }}
+          restore-keys:
+            - ccache-${{ runner.os }}-${{ github.job }}-${{ env.HEPMC_VERSION }}
+            - ccache-${{ runner.os }}-${{ github.job }}-
+            - ccache-${{ runner.os }}-${{ github.job }}_r2
+            - ccache-${{ runner.os }}-${{ github.job }}_
 
       - uses: actions/download-artifact@v3
         with:
@@ -287,9 +306,9 @@ jobs:
       - name: Build
         run: >
           curl -SL https://gitlab.cern.ch/hepmc/HepMC3/-/archive/${HEPMC_VERSION}/HepMC3-${HEPMC_VERSION}.tar.gz | tar -xzC .
-          && mv HepMC* hepmc_src
-          && mkdir hepmc_build && cd hepmc_build
-          && cmake ../hepmc_src
+          && mv HepMC* ${SRC_DIR}
+          && mkdir ${BUILD_DIR} && cd ${BUILD_DIR}
+          && cmake ../${SRC_DIR}
           -DCMAKE_CXX_COMPILER_LAUNCHER=ccache
           -DCMAKE_BUILD_TYPE=Release
           -DCMAKE_PREFIX_PATH=${INSTALL_DIR}
@@ -314,16 +333,20 @@ jobs:
         uses: actions/cache@v3
         with:
           path: ${{ env.CCACHE_DIR }}
-          key: ccache-${{ runner.os }}-${{ github.job }}_${{ env.CACHE_KEY_SUFFIX }}
-          restore-keys: ccache-${{ runner.os }}-${{ github.job }}_${{ env.CACHE_RESTORE_KEY_SUFFIX }}
+          key: ccache-${{ runner.os }}-${{ github.job }}-${{ env.PYTHIA8_VERSION }}
+          restore-keys:
+            - ccache-${{ runner.os }}-${{ github.job }}-${{ env.PYTHIA8_VERSION }}
+            - ccache-${{ runner.os }}-${{ github.job }}-
+            - ccache-${{ runner.os }}-${{ github.job }}_r2
+            - ccache-${{ runner.os }}-${{ github.job }}_
 
       - run: sudo mkdir ${INSTALL_DIR} && sudo chown $USER ${INSTALL_DIR}
 
       - name: Build
         run: >
           curl -SL https://pythia.org/download/pythia8${PYTHIA8_VERSION:0:1}/pythia8${PYTHIA8_VERSION}.tgz | tar -xzC .
-          && mv pythia8* pythia8_src
-          && cd pythia8_src
+          && mv pythia8* ${SRC_DIR}
+          && cd ${SRC_DIR}
           && CC="ccache $CC" CXX="ccache $CXX" ./configure --prefix=${INSTALL_DIR}
           && make -j2
           && make install
