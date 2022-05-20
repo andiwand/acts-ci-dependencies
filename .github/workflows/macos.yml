@@ -5,8 +5,10 @@ on: [push, pull_request]
 env:
   SRC_DIR: ${{ github.workspace }}/src
   BUILD_DIR: ${{ github.workspace }}/build
-  CCACHE_DIR: ${{ github.workspace }}/ccache
   INSTALL_DIR: /usr/local/acts
+
+  CCACHE_DIR: ${{ github.workspace }}/ccache
+  CCACHE_MAXSIZE: 10G
 
   CC: clang
   CXX: clang++
