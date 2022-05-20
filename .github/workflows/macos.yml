@@ -8,8 +8,8 @@ env:
   CCACHE_DIR: ${{ github.workspace }}/ccache
   INSTALL_DIR: /usr/local/acts
 
-  CC: gcc
-  CXX: g++
+  CC: clang
+  CXX: clang++
 
   XERCESC_VERSION: 3.2.2
   ROOT_VERSION: 6.26.00
