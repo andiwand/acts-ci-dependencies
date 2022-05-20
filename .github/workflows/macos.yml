@@ -3,11 +3,14 @@ name: macOS
 on: [push, pull_request] 
 
 env:
+  SRC_DIR: ${{ github.workspace }}/src
+  BUILD_DIR: ${{ github.workspace }}/build
   INSTALL_DIR: /usr/local/acts
 
   CCACHE_DIR: ${{ github.workspace }}/ccache
-  CCACHE_MAXSIZE: 10G
-  CCACHE_KEY_SUFFIX: r1
+
+  CACHE_KEY_SUFFIX: r2
+  CACHE_RESTORE_KEY_SUFFIX: 
 
   XERCESC_VERSION: 3.2.2
   ROOT_VERSION: 6.26.00
@@ -21,26 +24,24 @@ env:
 jobs:
   build_boost:
     runs-on: macos-11
-
     steps:
-      - name: Install dependencies
-        run: brew install ccache
-
       - name: Cache build
         uses: actions/cache@v3
         with:
-          path: ${{ github.workspace }}/ccache
-          key: ccache-${{ runner.os }}-${{ github.job }}_${{ env.CCACHE_KEY_SUFFIX }}
+          path: ${{ BUILD_DIR }}
+          key: ccache-${{ runner.os }}-${{ github.job }}_${{ env.CACHE_KEY_SUFFIX }}
+          restore-keys: ccache-${{ runner.os }}-${{ github.job }}_${{ env.CACHE_RESTORE_KEY_SUFFIX }}
 
       - run: sudo mkdir ${INSTALL_DIR} && sudo chown $USER ${INSTALL_DIR}
 
       - name: Build
         run: >
           curl -SL https://boostorg.jfrog.io/artifactory/main/release/${BOOST_VERSION}/source/boost_${BOOST_VERSION//./_}.tar.gz | tar -xzC .
-          && mv boost_* boost_src && cd boost_src
+          && mv boost_* ${SRC_DIR} && mkdir ${BUILD_DIR} && cd ${SRC_DIR}
           && ./bootstrap.sh 
           --prefix=${INSTALL_DIR}
-          && CC="ccache $CC" CXX="ccache $CXX" ./b2 install
+          --build-dir=${BUILD_DIR}
+          && ./b2 install
           && tar czf ../boost.tar.gz -C ${INSTALL_DIR} .
 
       - uses: actions/upload-artifact@v3
@@ -71,7 +72,8 @@ jobs:
         uses: actions/cache@v3
         with:
           path: ${{ github.workspace }}/ccache
-          key: ccache-${{ runner.os }}-${{ github.job }}_${{ env.CCACHE_KEY_SUFFIX }}
+          key: ccache-${{ runner.os }}-${{ github.job }}_${{ env.CACHE_KEY_SUFFIX }}
+          restore-keys: ccache-${{ runner.os }}-${{ github.job }}_${{ env.CACHE_RESTORE_KEY_SUFFIX }}
 
       - run: sudo mkdir ${INSTALL_DIR} && sudo chown $USER ${INSTALL_DIR}
 
@@ -105,7 +107,8 @@ jobs:
         uses: actions/cache@v3
         with:
           path: ${{ github.workspace }}/ccache
-          key: ccache-${{ runner.os }}-${{ github.job }}_${{ env.CCACHE_KEY_SUFFIX }}
+          key: ccache-${{ runner.os }}-${{ github.job }}_${{ env.CACHE_KEY_SUFFIX }}
+          restore-keys: ccache-${{ runner.os }}-${{ github.job }}_${{ env.CACHE_RESTORE_KEY_SUFFIX }}
 
       - uses: actions/download-artifact@v3
         with:
@@ -155,7 +158,8 @@ jobs:
         uses: actions/cache@v3
         with:
           path: ${{ github.workspace }}/ccache
-          key: ccache-${{ runner.os }}-${{ github.job }}_${{ env.CCACHE_KEY_SUFFIX }}
+          key: ccache-${{ runner.os }}-${{ github.job }}_${{ env.CACHE_KEY_SUFFIX }}
+          restore-keys: ccache-${{ runner.os }}-${{ github.job }}_${{ env.CACHE_RESTORE_KEY_SUFFIX }}
 
       - uses: actions/download-artifact@v3
         with:
@@ -201,7 +205,8 @@ jobs:
         uses: actions/cache@v3
         with:
           path: ${{ github.workspace }}/ccache
-          key: ccache-${{ runner.os }}-${{ github.job }}_${{ env.CCACHE_KEY_SUFFIX }}
+          key: ccache-${{ runner.os }}-${{ github.job }}_${{ env.CACHE_KEY_SUFFIX }}
+          restore-keys: ccache-${{ runner.os }}-${{ github.job }}_${{ env.CACHE_RESTORE_KEY_SUFFIX }}
 
       - uses: actions/download-artifact@v3
         with:
@@ -264,7 +269,8 @@ jobs:
         uses: actions/cache@v3
         with:
           path: ${{ github.workspace }}/ccache
-          key: ccache-${{ runner.os }}-${{ github.job }}_${{ env.CCACHE_KEY_SUFFIX }}
+          key: ccache-${{ runner.os }}-${{ github.job }}_${{ env.CACHE_KEY_SUFFIX }}
+          restore-keys: ccache-${{ runner.os }}-${{ github.job }}_${{ env.CACHE_RESTORE_KEY_SUFFIX }}
 
       - uses: actions/download-artifact@v3
         with:
@@ -305,7 +311,8 @@ jobs:
         uses: actions/cache@v3
         with:
           path: ${{ github.workspace }}/ccache
-          key: ccache-${{ runner.os }}-${{ github.job }}_${{ env.CCACHE_KEY_SUFFIX }}
+          key: ccache-${{ runner.os }}-${{ github.job }}_${{ env.CACHE_KEY_SUFFIX }}
+          restore-keys: ccache-${{ runner.os }}-${{ github.job }}_${{ env.CACHE_RESTORE_KEY_SUFFIX }}
 
       - run: sudo mkdir ${INSTALL_DIR} && sudo chown $USER ${INSTALL_DIR}
 
@@ -314,7 +321,7 @@ jobs:
           curl -SL https://pythia.org/download/pythia8${PYTHIA8_VERSION:0:1}/pythia8${PYTHIA8_VERSION}.tgz | tar -xzC .
           && mv pythia8* pythia8_src
           && cd pythia8_src
-          && ./configure --prefix=${INSTALL_DIR}
+          && CC="ccache $CC" CXX="ccache $CXX" ./configure --prefix=${INSTALL_DIR}
           && make -j2
           && make install
           && tar czf ../pythia8.tar.gz -C ${INSTALL_DIR} .
