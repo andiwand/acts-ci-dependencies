@@ -28,7 +28,7 @@ jobs:
       - name: Cache build
         uses: actions/cache@v3
         with:
-          path: ${{ BUILD_DIR }}
+          path: ${{ env.BUILD_DIR }}
           key: ccache-${{ runner.os }}-${{ github.job }}_${{ env.CACHE_KEY_SUFFIX }}
           restore-keys: ccache-${{ runner.os }}-${{ github.job }}_${{ env.CACHE_RESTORE_KEY_SUFFIX }}
 
@@ -71,7 +71,7 @@ jobs:
       - name: Cache build
         uses: actions/cache@v3
         with:
-          path: ${{ github.workspace }}/ccache
+          path: ${{ env.CCACHE_DIR }}
           key: ccache-${{ runner.os }}-${{ github.job }}_${{ env.CACHE_KEY_SUFFIX }}
           restore-keys: ccache-${{ runner.os }}-${{ github.job }}_${{ env.CACHE_RESTORE_KEY_SUFFIX }}
 
@@ -106,7 +106,7 @@ jobs:
       - name: Cache build
         uses: actions/cache@v3
         with:
-          path: ${{ github.workspace }}/ccache
+          path: ${{ env.CCACHE_DIR }}
           key: ccache-${{ runner.os }}-${{ github.job }}_${{ env.CACHE_KEY_SUFFIX }}
           restore-keys: ccache-${{ runner.os }}-${{ github.job }}_${{ env.CACHE_RESTORE_KEY_SUFFIX }}
 
@@ -157,7 +157,7 @@ jobs:
       - name: Cache build
         uses: actions/cache@v3
         with:
-          path: ${{ github.workspace }}/ccache
+          path: ${{ env.CCACHE_DIR }}
           key: ccache-${{ runner.os }}-${{ github.job }}_${{ env.CACHE_KEY_SUFFIX }}
           restore-keys: ccache-${{ runner.os }}-${{ github.job }}_${{ env.CACHE_RESTORE_KEY_SUFFIX }}
 
@@ -204,7 +204,7 @@ jobs:
       - name: Cache build
         uses: actions/cache@v3
         with:
-          path: ${{ github.workspace }}/ccache
+          path: ${{ env.CCACHE_DIR }}
           key: ccache-${{ runner.os }}-${{ github.job }}_${{ env.CACHE_KEY_SUFFIX }}
           restore-keys: ccache-${{ runner.os }}-${{ github.job }}_${{ env.CACHE_RESTORE_KEY_SUFFIX }}
 
@@ -268,7 +268,7 @@ jobs:
       - name: Cache build
         uses: actions/cache@v3
         with:
-          path: ${{ github.workspace }}/ccache
+          path: ${{ env.CCACHE_DIR }}
           key: ccache-${{ runner.os }}-${{ github.job }}_${{ env.CACHE_KEY_SUFFIX }}
           restore-keys: ccache-${{ runner.os }}-${{ github.job }}_${{ env.CACHE_RESTORE_KEY_SUFFIX }}
 
@@ -310,7 +310,7 @@ jobs:
       - name: Cache build
         uses: actions/cache@v3
         with:
-          path: ${{ github.workspace }}/ccache
+          path: ${{ env.CCACHE_DIR }}
           key: ccache-${{ runner.os }}-${{ github.job }}_${{ env.CACHE_KEY_SUFFIX }}
           restore-keys: ccache-${{ runner.os }}-${{ github.job }}_${{ env.CACHE_RESTORE_KEY_SUFFIX }}
 
