@@ -40,7 +40,7 @@ jobs:
       - name: Build
         run: >
           curl -SL https://boostorg.jfrog.io/artifactory/main/release/${BOOST_VERSION}/source/boost_${BOOST_VERSION//./_}.tar.gz | tar -xzC .
-          && mv boost_* ${SRC_DIR} && mkdir ${BUILD_DIR} && cd ${SRC_DIR}
+          && mv boost_* ${SRC_DIR} && cd ${SRC_DIR}
           && ./bootstrap.sh 
           --prefix=${INSTALL_DIR}
           && ./b2 install
