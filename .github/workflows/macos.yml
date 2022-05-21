@@ -388,7 +388,7 @@ jobs:
           && tar xf root.tar.gz -C ${INSTALL_DIR}
 
       - name: Build podio
-        run: > # not sure why export ROOTSYS=${INSTALL_DIR} is necessary
+        run: >
           curl -SL https://github.com/AIDASoft/podio/archive/refs/tags/${PODIO_VERSION}.tar.gz | tar -xzC .
           && mv podio-* ${SRC_DIR}
           && mkdir ${BUILD_DIR} && cd ${BUILD_DIR}
