@@ -394,8 +394,9 @@ jobs:
       - name: Build edm4hep
         run: >
           curl -SL https://github.com/key4hep/EDM4hep/archive/refs/tags/${EDM4HEP_VERSION}.tar.gz | tar -xzC .
-          && mv EDM4hep-* edm4hep_src
-          && cmake -B edm4hep_build -S edm4hep_src
+          && mv EDM4hep-* ${SRC_DIR}
+          && mkdir ${BUILD_DIR} && cd ${BUILD_DIR}
+          && cmake ${SRC_DIR}
           -DCMAKE_CXX_COMPILER_LAUNCHER=ccache
           -DCMAKE_BUILD_TYPE=Release
           -DCMAKE_PREFIX_PATH=${INSTALL_DIR}
