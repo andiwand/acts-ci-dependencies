@@ -390,6 +390,7 @@ jobs:
           -USE_EXTERNAL_CATCH2=OFF
           && make -j2
           && make install
+          && rm -rf ${BUILD_DIR}
 
       - name: Build edm4hep
         run: >
