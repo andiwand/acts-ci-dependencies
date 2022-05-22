@@ -406,10 +406,7 @@ jobs:
           -USE_EXTERNAL_CATCH2=OFF
           && make -j2
           && make install
-
-      - name: Package output
-        run: >
-          tar czf ../edm4hep.tar.gz -C ${INSTALL_DIR} .
+          && tar czf ../edm4hep.tar.gz -C ${INSTALL_DIR} .
 
       - uses: actions/upload-artifact@v3
         with:
