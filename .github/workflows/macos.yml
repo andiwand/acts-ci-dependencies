@@ -356,7 +356,7 @@ jobs:
         run: brew install cmake ccache
 
       - name: Install Python dependencies
-        run: pip install jinja2 pyyaml
+        run: pip3 install jinja2 pyyaml
 
       - name: Cache build
         uses: actions/cache@v3
