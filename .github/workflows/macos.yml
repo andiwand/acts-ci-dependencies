@@ -222,8 +222,8 @@ jobs:
           name: root
           path: .
 
-      - run: mkdir -p ${DEPENDENCY_DIR}
-      - run: tar xf root.tar.gz -C ${DEPENDENCY_DIR}
+      - run: sudo mkdir -p ${DEPENDENCY_DIR}
+      - run: sudo tar xf root.tar.gz -C ${DEPENDENCY_DIR}
 
       - name: Build podio
         run: >
@@ -276,9 +276,9 @@ jobs:
           name: podio
           path: .
 
-      - run: mkdir -p ${DEPENDENCY_DIR}
-      - run: tar xf root.tar.gz -C ${DEPENDENCY_DIR}
-      - run: tar xf podio.tar.gz -C ${DEPENDENCY_DIR}
+      - run: sudo mkdir -p ${DEPENDENCY_DIR}
+      - run: sudo tar xf root.tar.gz -C ${DEPENDENCY_DIR}
+      - run: sudo tar xf podio.tar.gz -C ${DEPENDENCY_DIR}
 
       - name: Build edm4hep
         run: >
