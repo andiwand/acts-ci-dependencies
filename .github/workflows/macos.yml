@@ -14,6 +14,7 @@ env:
   CC: clang
   CXX: clang++
 
+  PYTHON_VERSION: 3.9.14
   XERCESC_VERSION: 3.2.2
   ROOT_VERSION: 6.26.00
   GEANT4_VERSION: 11.0.0
@@ -26,6 +27,35 @@ env:
   EDM4HEP_VERSION: v00-04-01
 
 jobs:
+  build_python:
+    runs-on: macos-11
+    steps:
+      - name: Cache build
+        uses: actions/cache@v3
+        with:
+          path: ${{ env.BUILD_DIR }}
+          key: builddir-${{ runner.os }}-${{ github.job }}-${{ env.BOOST_VERSION }}
+          restore-keys: |
+            builddir-${{ runner.os }}-${{ github.job }}-${{ env.BOOST_VERSION }}
+            builddir-${{ runner.os }}-${{ github.job }}-
+
+      - name: Build
+        run: >
+          curl -SL https://www.python.org/ftp/python/${PYTHON_VERSION}/Python-${PYTHON_VERSION}.tgz | tar -xzC .
+          && mv Python-* ${SRC_DIR} && cd ${SRC_DIR}
+          && ./configure
+          --prefix=${INSTALL_DIR}
+          --enable-optimizations
+          --with-ensurepip=install
+          && make -j2
+          && make install
+          && tar czf ../python.tar.gz -C ${INSTALL_DIR} .
+
+      - uses: actions/upload-artifact@v3
+        with:
+          name: python
+          path: python.tar.gz
+
   build_boost:
     runs-on: macos-11
     steps:
@@ -102,6 +132,7 @@ jobs:
   build_root:
     runs-on: macos-11
     needs:
+      - build_python
       - build_tbb
     steps:
       - name: Install dependencies
@@ -118,10 +149,15 @@ jobs:
 
       - uses: actions/download-artifact@v3
         with:
+          name: python
+          path: .
+      - uses: actions/download-artifact@v3
+        with:
           name: tbb
           path: .
 
       - run: sudo mkdir -p ${DEPENDENCY_DIR}
+      - run: sudo tar xf python.tar.gz -C ${DEPENDENCY_DIR}
       - run: sudo tar xf tbb.tar.gz -C ${DEPENDENCY_DIR}
 
       - name: Build
@@ -200,13 +236,11 @@ jobs:
   build_podio:
     runs-on: macos-11
     needs:
+      - build_python
       - build_root
     steps:
       - name: Install dependencies
         run: brew install cmake ccache
-
-      - name: Install Python dependencies
-        run: pip3 install jinja2 pyyaml
 
       - name: Cache build
         uses: actions/cache@v3
@@ -219,11 +253,19 @@ jobs:
 
       - uses: actions/download-artifact@v3
         with:
+          name: python
+          path: .
+      - uses: actions/download-artifact@v3
+        with:
           name: root
           path: .
 
       - run: sudo mkdir -p ${DEPENDENCY_DIR}
+      - run: sudo tar xf python.tar.gz -C ${DEPENDENCY_DIR}
       - run: sudo tar xf root.tar.gz -C ${DEPENDENCY_DIR}
+
+      - name: Install Python dependencies
+        run: ${DEPENDENCY_DIR}/pip3 install jinja2 pyyaml
 
       - name: Build podio
         run: >
@@ -249,14 +291,12 @@ jobs:
   build_edm4hep:
     runs-on: macos-11
     needs:
+      - build_python
       - build_root
       - build_podio
     steps:
       - name: Install dependencies
         run: brew install cmake ccache
-
-      - name: Install Python dependencies
-        run: pip3 install jinja2 pyyaml
 
       - name: Cache build
         uses: actions/cache@v3
@@ -269,6 +309,10 @@ jobs:
 
       - uses: actions/download-artifact@v3
         with:
+          name: python
+          path: .
+      - uses: actions/download-artifact@v3
+        with:
           name: root
           path: .
       - uses: actions/download-artifact@v3
@@ -276,7 +320,11 @@ jobs:
           name: podio
           path: .
 
+      - name: Install Python dependencies
+        run: ${DEPENDENCY_DIR}/pip3 install jinja2 pyyaml
+
       - run: sudo mkdir -p ${DEPENDENCY_DIR}
+      - run: sudo tar xf python.tar.gz -C ${DEPENDENCY_DIR}
       - run: sudo tar xf root.tar.gz -C ${DEPENDENCY_DIR}
       - run: sudo tar xf podio.tar.gz -C ${DEPENDENCY_DIR}
 
@@ -304,6 +352,7 @@ jobs:
   build_dd4hep:
     runs-on: macos-11
     needs:
+      - build_python
       - build_boost
       - build_tbb
       - build_xercesc
@@ -324,6 +373,10 @@ jobs:
             ccache-${{ runner.os }}-${{ github.job }}-${{ env.DD4HEP_VERSION }}-r1
             ccache-${{ runner.os }}-${{ github.job }}-
 
+      - uses: actions/download-artifact@v3
+        with:
+          name: python
+          path: .
       - uses: actions/download-artifact@v3
         with:
           name: boost
@@ -354,6 +407,7 @@ jobs:
           path: .
 
       - run: sudo mkdir -p ${DEPENDENCY_DIR}
+      - run: sudo tar xf python.tar.gz -C ${DEPENDENCY_DIR}
       - run: sudo tar xf boost.tar.gz -C ${DEPENDENCY_DIR}
       - run: sudo tar xf xercesc.tar.gz -C ${DEPENDENCY_DIR}
       - run: sudo tar xf tbb.tar.gz -C ${DEPENDENCY_DIR}
@@ -466,7 +520,7 @@ jobs:
   make_tarball:
     runs-on: ubuntu-latest # we don't need macOS here
     needs: 
-      - build_boost
+      - build_python
       - build_tbb
       - build_xercesc
       - build_root
@@ -477,6 +531,10 @@ jobs:
       - build_edm4hep
       - build_dd4hep
     steps:
+      - uses: actions/download-artifact@v3
+        with:
+          name: python
+          path: .
       - uses: actions/download-artifact@v3
         with:
           name: boost
@@ -519,6 +577,7 @@ jobs:
           path: .
 
       - run: sudo mkdir -p ${DEPENDENCY_DIR}
+      - run: sudo tar xf python.tar.gz -C ${DEPENDENCY_DIR}
       - run: sudo tar xf tbb.tar.gz -C ${DEPENDENCY_DIR}
       - run: sudo tar xf boost.tar.gz -C ${DEPENDENCY_DIR}
       - run: sudo tar xf xercesc.tar.gz -C ${DEPENDENCY_DIR}
